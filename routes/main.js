@@ -19,6 +19,7 @@ const WeekProducts_Model = require("../models/WeekProducts");
 
 const User_Model = require("../models/User");
 const Notes_Model = require("../models/Notes");
+const Treatment_Model = require("../models/Treatment");
 
 function isNumeric(str) {
   if (typeof str != "string") return false; // we only process strings!
@@ -2459,6 +2460,47 @@ router.post("/addnote", (req, res) => {
 router.get("/getusernotes/:id", (req, res) => {
   let { id } = req.params;
   Notes_Model.find({ id: id })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => res.status(400).json(`Error: ${err}`));
+});
+
+router.post("/addtreatment", (req, res) => {
+  const body = req.body;
+
+  if (!body) {
+    return res.status(400).json({
+      success: false,
+      error: "no user provided",
+    });
+  }
+
+  const treatment = new Treatment_Model(body);
+
+  if (!treatment) {
+    return res.status(400).json({ success: false, error: err });
+  }
+
+  treatment
+    .save()
+    .then(() => {
+      return res.status(201).json({
+        success: true,
+        message: "treatment created!",
+      });
+    })
+    .catch((error) => {
+      return res.status(400).json({
+        error,
+        message: "treatment not created!",
+      });
+    });
+});
+
+router.get("/gettreatment/:id", (req, res) => {
+  let { id } = req.params;
+  Treatment_Model.find({ userId: id })
     .then((data) => {
       res.status(200).json(data);
     })
