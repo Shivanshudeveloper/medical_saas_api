@@ -2572,4 +2572,13 @@ router.get("/getallappointments/:id", (req, res) => {
     .catch((err) => res.status(400).json(`Error: ${err}`));
 });
 
+router.get("/getoneappointment/:id", (req, res) => {
+  let { id } = req.params;
+  Appointment_Model.find({ _id: id })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => res.status(400).json(`Error: ${err}`));
+});
+
 module.exports = router;
